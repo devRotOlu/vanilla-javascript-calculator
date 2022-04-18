@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculator</title>
+    <link rel="stylesheet" href='./calculator.css'>
+</head>
+<body>
+
+    <div id="calContainer">
+
+        <div id='calculator'>
+
+            <div id='calHeader' class="flexItems">
+
+                <h3>Calc</h3>
+                <div id="colorTheme">
+                    <span>THEME</span>
+                    <div id='ctrlContainer'>
+                        <span>
+                            <span>1</span> <span>2</span><span>3</span>
+                        </span>
+                        <div id="colorCtrl"><div></div></div>
+                    </div>
+                </div>
+
+            </div>
+        
+            <div id='calDisplay' class="flexItems"></div>
+
+            <div id='calBody' class="flexItems gridContainer">
+
+                <button class="buttons operants operationsButton">7</button><button class="buttons operants operationsButton">8</button><button class="buttons operants operationsButton">9</button>
+                <button class="buttons delete">DEL</button><button class="buttons operants operationsButton">4</button><button class="buttons operants operationsButton">5</button>
+                <button class="buttons operants operationsButton">6</button><button class="buttons operators operationsButton">+</button><button class="buttons operants operationsButton"> 1</button>
+                <button class="buttons operants operationsButton">2</button><button class="buttons operants operationsButton">3</button><button class="buttons operators operationsButton">-</button>
+                <button class="buttons operants operationsButton">.</button><button class="buttons operants operationsButton">0</button><button class="buttons operators operationsButton">/</button>
+                <button class="buttons operators operationsButton">*</button>
+
+                <button class="buttons reset">RESET</button><button class="buttons equals operationsButton">=</button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <script src="./calclulator.js"></script>
+    
+</body>
+</html>

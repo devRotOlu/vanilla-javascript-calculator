@@ -1,0 +1,132 @@
+*{
+    padding: 0;
+    margin: 0;
+}
+
+#calContainer{
+    /* width: 1440px; */
+    margin: 20px 0;
+    background-color:grey;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 30px 0;
+    color: white;
+}
+
+#calculator{
+    width:35%;
+    /* background-color: blue; */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.flexItems{
+    width: 90%;
+}
+
+#calHeader{
+    display: flex;
+    justify-content: space-between;
+}
+
+#calHeader>h3{
+    align-self: center;
+}
+
+#colorTheme{
+    display: flex;
+}
+
+#colorTheme> span{
+    margin-right: 1em;
+    align-self: flex-end;
+}
+
+#ctrlContainer{
+    width: 50px;
+}
+
+#ctrlContainer>span{
+    display: flex;
+    justify-content: space-between;
+}
+
+#ctrlContainer>span span:first-child{
+    margin-left: 3px;
+}
+
+#ctrlContainer>span span:last-child{
+    margin-right: 3px;
+}
+
+#colorCtrl{
+    box-sizing: border-box;
+    display: block;
+    width: 50px;
+    height: 17px;
+    border-radius: 10px;
+    background-color: black;
+    margin-top: 5px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding:3px ;
+} 
+
+#colorCtrl>div {
+    width: 12px; 
+    height: 12px;
+    border-radius: 50%;  
+    background-color: orangered;
+    cursor: pointer;
+}
+
+#calDisplay{
+    box-sizing: border-box;
+    height: 100px;
+    background-color: black;
+    margin: 20px 0;
+    border-radius: 10px;
+    text-align: right;
+    line-height: 100px;
+    padding: 0 1em;
+}
+
+#calBody{
+    background-color: black;
+}
+
+.gridContainer{
+    display: grid;
+    grid-template-columns: repeat(4,15%);
+    justify-content: space-evenly;
+    grid-row-gap: 20px;
+    padding: 20px 0;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.reset{
+    grid-column: 1/3;
+}
+
+.equals{
+    grid-column: 3/5;
+}
+
+.gridContainer button:nth-child(odd){
+    background-color: brown;
+}
+
+.gridContainer button:nth-child(even){
+    background-color: chartreuse;
+}
+.buttons{
+    padding: 12px 0;
+    text-align: center;
+    border-radius: 5px;
+    box-shadow:-2px 2px grey;
+    cursor: pointer;
+}
