@@ -9,7 +9,7 @@
 </head>
 <body>
 
-    <div id="calContainer">
+    <div id="calContainer" class="backgroundColor">
 
         <div id='calculator'>
 
@@ -22,24 +22,24 @@
                         <span>
                             <span>1</span> <span>2</span><span>3</span>
                         </span>
-                        <div id="colorCtrl"><div></div></div>
+                        <div id="colorCtrl" class='backgroundColor'><div></div></div>
                     </div>
                 </div>
 
             </div>
         
-            <div id='calDisplay' class="flexItems"></div>
+            <div id='calDisplay' class="flexItems backgroundColor"></div>
 
             <div id='calBody' class="flexItems gridContainer">
 
-                <button class="buttons operants operationsButton">7</button><button class="buttons operants operationsButton">8</button><button class="buttons operants operationsButton">9</button>
-                <button class="buttons delete">DEL</button><button class="buttons operants operationsButton">4</button><button class="buttons operants operationsButton">5</button>
-                <button class="buttons operants operationsButton">6</button><button class="buttons operators operationsButton">+</button><button class="buttons operants operationsButton"> 1</button>
-                <button class="buttons operants operationsButton">2</button><button class="buttons operants operationsButton">3</button><button class="buttons operators operationsButton">-</button>
-                <button class="buttons operants operationsButton">.</button><button class="buttons operants operationsButton">0</button><button class="buttons operators operationsButton">/</button>
-                <button class="buttons operators operationsButton">*</button>
+                <button class="buttons operants operationsButtons operanstsAndOperators">7</button><button class="buttons operants operationsButtons operanstsAndOperators">8</button><button class="buttons operants operationsButtons operanstsAndOperators">9</button>
+                <button class="buttons" id='delete'>DEL</button><button class="buttons operants operationsButtons operanstsAndOperators">4</button><button class="buttons operants operationsButtons operanstsAndOperators">5</button>
+                <button class="buttons operants operationsButtons operanstsAndOperators">6</button><button class="buttons operators operationsButtons operanstsAndOperators">+</button><button class="buttons operants operationsButtons operanstsAndOperators"> 1</button>
+                <button class="buttons operants operationsButtons operanstsAndOperators">2</button><button class="buttons operants operationsButtons operanstsAndOperators">3</button><button class="buttons operators operationsButtons operanstsAndOperators">-</button>
+                <button class="buttons operants operationsButtons operanstsAndOperators">.</button><button class="buttons operants operationsButtons operanstsAndOperators">0</button><button class="buttons operators operationsButtons operanstsAndOperators">/</button>
+                <button class="buttons operators operationsButtons operanstsAndOperators">*</button>
 
-                <button class="buttons reset">RESET</button><button class="buttons equals operationsButton">=</button>
+                <button class="buttons" id='reset'>RESET</button><button class="buttons operationsButtons equals" id='equals'>=</button>
 
             </div>
 
