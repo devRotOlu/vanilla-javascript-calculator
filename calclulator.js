@@ -1,4 +1,3 @@
-//localStorage.removeItem('colorIndex')
 
 const calculatorController= (()=> {
 
@@ -32,6 +31,11 @@ const calculatorController= (()=> {
         },
     };
 
+    if (calMemoryLocalStorage.getCalMemory()===null) {
+
+        calMemoryLocalStorage.setCalMemory('')
+        
+    }
 
     return{
 
@@ -61,6 +65,7 @@ const UIController=(()=>{
     const domItems={
 
         toggle: document.getElementById('colorCtrl').firstElementChild,
+        screenContainer: document.getElementById('calDisplay').firstElementChild,
 
 
         // calculator backgrounds
@@ -85,10 +90,11 @@ const UIController=(()=>{
         getDomItems:domItems,
         value:'',
         equalsClicked:false,
+        operatorClicked:false,
         backgroundsColorObject:{
 
             main:['hsl(222, 26%, 31%)','hsl(0, 0%, 90%)','hsl(268, 75%, 9%)'],
-           toggleBackground:['hsl(223, 31%, 20%)','hsl(0, 5%, 81%)','hsl(268, 71%, 12%)'],
+            toggleBackground:['hsl(223, 31%, 20%)','hsl(0, 5%, 81%)','hsl(268, 71%, 12%)'],
             keypadBackground:['hsl(223, 31%, 20%)','hsl(0, 5%, 81%)','hsl(268, 71%, 12%)'],
             screenBackground:['hsl(224, 36%, 15%)','hsl(0, 0%, 93%)','hsl(268, 71%, 12%)']
         },
@@ -117,16 +123,198 @@ const UIController=(()=>{
 
         equalsButtonColor:['white','white','hsl(60, 10%, 19%)'],
 
-        toggleDistance:[0 ,16,32],
+        toggleDistance:[0,16,32],
 
-        
-        getCalDisplayValue(button,screenValueToLocalStorage){
+        storageValuesAreEqual:false,
+
+        removeCommas(value){
+
+            return value.split('').filter(item=> item !==',').join('')
+
+        },
+
+        separateValuesIntoHundreds(value){// comma seperates values into hundreds
+
+            let displayValue=value
+
+            if (displayValue.includes(',')) { // removes commas if present
+
+               displayValue= this.removeCommas(displayValue)
+                
+            }
+
+            return  displayValue.split(' ').map(item=>{
+
+                        if (Number(item)) {
+
+                            const containsDecimal=item.includes('.')
+
+                            if (containsDecimal) {
+
+                                const decimalPointIndex= item.split('').reverse().join('').indexOf('.')
+
+                                return item.split('').reverse().map((number,index)=>{
+
+                                    if (index>decimalPointIndex) {
+
+                                        const newIndexForNumber= index-decimalPointIndex
+
+                                        return ( newIndexForNumber>=4 && newIndexForNumber%3===1)? `${number},`:number
+                                        
+                                    }
+
+                                    return number
+
+                                }).reverse().join('')
+                                 
+                            }
+
+                            return item.split('').reverse().map((number,index)=>{
+
+                                return (index>=3 && (index+1)%3===1)? `${number},`:number
+
+                            }).reverse().join('')
+                            
+                        }
+
+                        return item
+
+                    }).join(' ')
+        },
+
+        modifyZeros(button){ // modifies zeros 
+
+            let valueArray, valueArrayMaxIndex, prevValuesAllZeros;
+            valueArray= this.value.split(' ');
+            valueArrayMaxIndex=valueArray.length - 1
+            prevValuesAllZeros= (valueArray[valueArrayMaxIndex]).split('').every(value=> value=='0')
+
+            if (prevValuesAllZeros) {
+
+                if (button.innerText=='.') {
+
+                    return this.value= valueArray.map((value,index)=>(index===valueArrayMaxIndex)?`0`:value).join(' ')
+                    
+                }
+                
+                this.value= valueArray.map((value,index)=>(index===valueArrayMaxIndex)?'':value).join(' ')
+                        
+            }
+
+        },
+
+        parseThisValue(button,evaluatedValue){
 
             if (!button) {
 
-                domItems.screenBackground.innerHTML=localStorage.getItem('calMemory');
+                this.value= localStorage.getItem('calMemory'); 
 
-                this.value=localStorage.getItem('calMemory');
+                this.storageValuesAreEqual=true
+                
+                return
+                
+            }
+
+            const value= this.value.endsWith(' ') || !this.value.length
+
+            if (button.innerText=='.') {
+
+                let decimalInArrayMaxIndex,valueArray,valueArrayMaxIndex;
+
+                valueArray= this.value.split(' ');
+                valueArrayMaxIndex=valueArray.length - 1
+                this.value.length? decimalInArrayMaxIndex=valueArray[valueArrayMaxIndex].includes('.'): null;
+                
+                if (value) {
+
+                    this.value=`${this.value}0.`
+
+                }
+                else if(!decimalInArrayMaxIndex){
+
+                    this.modifyZeros(button)
+
+                    this.value= `${this.value}${button.innerText}`
+
+                }
+
+                return;
+
+            } else if( Number(button.innerText) > 0){
+
+                if (value) {
+
+                   return this.value= `${this.value}${button.innerText}`
+                    
+                }
+
+                this.modifyZeros(button)
+                return this.value= `${this.value}${button.innerText}`
+                
+            }else if(button.classList.contains('equals')){
+
+                return this.value=evaluatedValue;
+
+            }else if(button.classList.contains('operators')){
+
+                return this.value= `${this.value} ${button.innerText} `
+
+            }
+
+            this.value= `${this.value}${button.innerText}`       
+        },
+
+        evaluateValue(value){
+
+            const evaluatedValue=`${(eval(this.removeCommas(value)))}`
+
+            if (evaluatedValue.includes('-')) {/// spaces the minus symbol from the figures 
+
+                return evaluatedValue.split('-').map(item=>(item==='')? '-':item).join(' ')                      
+            }
+
+            return evaluatedValue
+
+        },
+
+        checkConditions(button){
+
+            const operant= button.classList.contains('operants');
+
+            let conditionIsTrue= this.equalsClicked && operant && !this.value.endsWith(' ') && domItems.screenContainer.innerHTML !=='Syntax Error'
+
+            // this is to take care of the next key pressed after equals key is pressed 
+            conditionIsTrue? this.operatorClicked=false : null;
+
+            conditionIsTrue= !this.equalsClicked || (this.operatorClicked && this.equalsClicked) || this.storageValuesAreEqual
+                
+            if (conditionIsTrue) {
+
+            
+                if (this.operatorClicked && this.equalsClicked) {
+
+                    this.operatorClicked=false;
+                    this.equalsClicked=false
+                    
+                }
+                
+            } else {
+
+                this.value= ''                
+            }
+
+        },
+      
+        passValueToDisplay(button,screenValueToLocalStorage){
+
+            let screenContainer= domItems.screenContainer;
+
+            
+            if (!button) {
+
+                screenContainer.innerHTML=this.separateValuesIntoHundreds(localStorage.getItem('calMemory'));
+
+                this.parseThisValue()
 
                 this.equalsClicked=true
 
@@ -136,26 +324,9 @@ const UIController=(()=>{
 
             if (button.classList.contains('operants')) {
 
-                // this is to take care of the next key pressed after equals symbol 
-                (this.equalsClicked && typeof(button.innerText=='number') && Number(this.value[this.value.length-1]) && domItems.screenBackground.innerHTML !=='Syntax Error' )? this.operatorClicked=false : null;
-                
-                if (!this.equalsClicked || (this.operatorClicked && this.equalsClicked)) {
-
-                
-                    if (this.operatorClicked && this.equalsClicked) {
-
-                        this.operatorClicked=false;
-                        this.equalsClicked=false
-                        
-                    }
-                    
-                } else {
-
-                    this.value= ''                
-                }
-
-                this.value= `${this.value}${button.innerText}`;               
-                domItems.screenBackground.innerHTML= this.value;
+                this.checkConditions(button);
+                this.parseThisValue(button)
+                screenContainer.innerHTML= this.separateValuesIntoHundreds(this.value);
                 this.equalsClicked=false
                 
             }else if(button.classList.contains('equals')){
@@ -163,48 +334,105 @@ const UIController=(()=>{
                 try {
 
                     this.equalsClicked=true;
-                    domItems.screenBackground.innerHTML= Number(eval(this.value));
-                    this.value=`${eval(this.value)}`;
+                    const evaluatedValue=this.evaluateValue(this.value)
+                    screenContainer.innerHTML= this.separateValuesIntoHundreds(evaluatedValue);
+                    this.parseThisValue(button,evaluatedValue)
                     
                 } catch (error) {
 
-                    domItems.screenBackground.innerHTML= 'Syntax Error';                 
+                    screenContainer.innerHTML= 'Syntax Error';                 
                 }
 
-            }else {
+            }else { 
 
-                this.value= `${this.value} ${button.innerText} `;
-                domItems.screenBackground.innerHTML= this.value;
+                this.parseThisValue(button);
+                screenContainer.innerHTML=this.separateValuesIntoHundreds(this.value)
                 this.operatorClicked=true;
 
             }
 
-            return screenValueToLocalStorage(domItems.screenBackground.innerHTML)
+            if (screenContainer.innerHTML==='Syntax Error') {
 
+                screenValueToLocalStorage(this.value);
+                this.storageValuesAreEqual=true
+            } else {
+
+                screenValueToLocalStorage(screenContainer.innerHTML);
+                this.storageValuesAreEqual=false
+                
+            }
         },
 
-        deleteCalDisplayValue(){
 
-            const calDisplayValue=`${domItems.screenBackground.innerHTML }`
-            let newCalDisplayValue;
-            if (calDisplayValue[calDisplayValue.length-1]===' ') {
-    
-                newCalDisplayValue=calDisplayValue.slice(0,calDisplayValue.length-3)
+        deleteDisplayValue(valueToLocalStorage){
+
+            let storageValuesAreEqual,condtionIsTrue; 
+
+            condtionIsTrue= this.equalsClicked && !this.value.endsWith(' ');
+
+            if (this.storageValuesAreEqual) {
+
+                condtionIsTrue= false;
+                storageValuesAreEqual=true
                 
             }else{
 
-                newCalDisplayValue=calDisplayValue.slice(0,calDisplayValue.length-1)
+                storageValuesAreEqual=false;
             }
-            domItems.screenBackground.innerHTML=newCalDisplayValue
-            this.value=newCalDisplayValue
+
+            
+            if (condtionIsTrue) {/// ensures answers cannot be edited. answers can only be edited if page is refreshed
+
+                return this.resetCal(valueToLocalStorage)
+                
+            }
+
+            let calDisplayValue, valueArrayMaxIndex, arrayValuesAllZeros,indexOfValueToDelete;
+
+            valueArrayMaxIndex= this.value.split(' ').length-1;
+            arrayValuesAllZeros= this.value.split(' ')[valueArrayMaxIndex].split('').every(value=> value==='0');
+            indexOfValueToDelete= this.value.lastIndexOf(this.value.split(' ')[valueArrayMaxIndex])
+
+            
+            if (this.value.endsWith(' ')) {
+    
+                calDisplayValue=this.value.slice(0,this.value.length-3)
+                
+            }else if(arrayValuesAllZeros){
+
+                calDisplayValue=this.value.slice(0,indexOfValueToDelete)
+
+            }
+            else{
+
+                calDisplayValue=this.value.slice(0,this.value.length-1)
+            }
+
+            domItems.screenContainer.innerHTML= this.separateValuesIntoHundreds(calDisplayValue)
+            this.value= calDisplayValue
+
+            if (storageValuesAreEqual) {
+
+                valueToLocalStorage(this.value);
+                this.storageValuesAreEqual=true;
+                
+            } else {
+
+                valueToLocalStorage(domItems.screenContainer.innerHTML);
+                this.storageValuesAreEqual=false;
+                
+            }
         },
 
-        resetCal(){
+        resetCal(valueToLocalStorage){
 
-            domItems.screenBackground.innerHTML='';
+            domItems.screenContainer.innerHTML='';
             this.value='';
             this.equalsClicked=false;
             this.operatorClicked=false;
+            this.storageValuesAreEqual=true;
+
+            return valueToLocalStorage(domItems.screenContainer.innerHTML)
 
         },
 
@@ -247,18 +475,22 @@ const controller=((calContrl, UIContrl)=> {
     const selectDomItems= UIContrl.getDomItems; let i= Number(localStorage.getItem("colorIndex"));
 
     Array.prototype.forEach.call(selectDomItems.operationsButtons, button=> {
-        button.addEventListener('click', ({target})=> UIContrl.getCalDisplayValue(target,calContrl.addCalMemoryToLocalStorage))
+        button.addEventListener('click', ({target})=> {
+
+            UIContrl.passValueToDisplay(target,calContrl.addCalMemoryToLocalStorage);
+
+        })
     })
     
-    selectDomItems.calDeleteButton.addEventListener('click',()=> UIContrl.deleteCalDisplayValue())
+    selectDomItems.calDeleteButton.addEventListener('click',()=> UIContrl.deleteDisplayValue(calContrl.addCalMemoryToLocalStorage))
 
-    selectDomItems.calResetButton.addEventListener('click',()=> UIContrl.resetCal())
+    selectDomItems.calResetButton.addEventListener('click',()=> UIContrl.resetCal(calContrl.addCalMemoryToLocalStorage))
 
     selectDomItems.toggle.addEventListener('click',()=> {
         i===2? i=0: i++
         UIContrl.changeCalTheme(i,calContrl.addColorIndexOnLocalStorage)
     })
 
-    UIContrl.changeCalTheme(); UIContrl.getCalDisplayValue()
+    UIContrl.changeCalTheme(); UIContrl.passValueToDisplay()
 
 })(calculatorController,UIController);

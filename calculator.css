@@ -2,23 +2,25 @@
 *{
     padding: 0;
     margin: 0;
+    
 }
 
 #calContainer{
-    /* width: 1440px; */
     display: flex;
+    min-width: 375px;
+    max-width: 1440px;
     align-items: center;
     justify-content: center;
     padding: 30px 0;
     color: white;
     background-color:hsl(222, 26%, 31%);
     font-weight: 700;
+    font-family: 'League Spartan', sans-serif;
     font-size: 20px;
 }
 
 #calculator{
-    width:51%;
-    /* background-color: blue; */
+    width: 95%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -35,6 +37,7 @@
 
 #calHeader>h3{
     align-self: center;
+    margin-left: 0.2em;
 }
 
 #colorTheme{
@@ -48,11 +51,14 @@
 
 #ctrlContainer{
     width: 50px;
+    margin-right: 0.2em;
+
 }
 
 #ctrlContainer>span{
     display: flex;
     justify-content: space-between;
+    margin-bottom: 10px;
 }
 
 #ctrlContainer>span span:first-child{
@@ -92,12 +98,19 @@
     background-color: hsl(224, 36%, 15%);
     margin: 20px 0;
     border-radius: 10px;
-    text-align: right;
     line-height: 130px;
     padding: 0 1em;
     font-size: 32px;
     font-weight: 700;
 }
+
+#calDisplay div{
+    overflow: hidden;
+    display: flex;
+    justify-content: flex-end;
+    white-space: nowrap;
+}
+
 
 #calBody{
     background-color:hsl(223, 31%, 20%);
@@ -119,7 +132,6 @@
 
 .buttons{
     padding: 10px 0;
-    text-align: center;
     border-radius: 8px;
     cursor: pointer;
     font-weight: inherit;
@@ -148,4 +160,47 @@
     background-color: hsl(6, 63%, 50%);
     box-shadow:-1px 1px hsl(6, 70%, 34%);
     color: white;
+}
+
+
+@media screen and (min-width:650px) {
+
+    #calculator{
+        width: 80%;
+    }
+    
+}
+
+@media screen and (min-width:800px) {
+
+    #calculator{
+        width: 70%;
+    }
+    
+}
+
+
+@media screen and (min-width:1000px) {
+
+    #calculator{
+        width: 57%;
+    }
+    
+}
+
+
+@media screen and (min-width:1200px) {
+
+    #calculator{
+        width: 50%;
+    }
+    
+}
+
+@media screen and (min-width:1400px) {
+
+    #calculator{
+        width: 46%;
+    }
+    
 }
